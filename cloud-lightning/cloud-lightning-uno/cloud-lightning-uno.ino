@@ -28,8 +28,6 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <Adafruit_NeoPixel.h>
-
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -38,8 +36,7 @@
 //   NEO_KHZ400  400 KHz bitstream (e.g. FLORA pixels)
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
 int NUM_LEDS = 4;
-int LED_PIN = 4;
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+int ledPins[]={3,5,6,9};
 
 const int HIGH_STRIKE_LIKELIHOOD = 5;
 const int LOW_STRIKE_LIKELIHOOD = 10;
@@ -76,12 +73,10 @@ float (*functionPtrs[10])(); //the array of function pointers
 int NUM_FUNCTIONS = 2;
 
 void setup() {
-  // Setup the Serial connection to talk over Bluetooth
-  Serial.begin(9600);
-  
-  // Neopixel setup
-  strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
+//Serial.begin(9600);
+  for (int i = 0; i < NUM_LEDS; i++) {
+  pinMode(ledPins[i], OUTPUT);
+  }
 
   // initializes the array of function pointers.
   functionPtrs[0] = simple_moving_average;
@@ -89,14 +84,14 @@ void setup() {
 }
 
 void loop() {
-  String trigger = readFromBluetooth();
-  if (trigger==String("f")) {
-    int led = random(NUM_LEDS);
+
+  if (random(chance) == 3) {
+    int led = ledPins[random(NUM_LEDS)];
     for (int i = 0; i < 10; i++) {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
-      lightningStrike(random(NUM_LEDS));
+      lightningStrike(ledPins[random(NUM_LEDS)]);
     }
     // Once there's been one strike, I make it more likely that there will be a second.
     chance = HIGH_STRIKE_LIKELIHOOD;
@@ -109,39 +104,22 @@ void loop() {
 
 void turnAllPixelsOff() {
   for (int i = 0; i < NUM_LEDS; i++) {
-    strip.setPixelColor(i, 0);
+    analogWrite(ledPins[i], 0);
   }
-  strip.show();
 }
 
 void lightningStrike(int pixel) {
   float brightness = callFunction(random(NUM_FUNCTIONS));
-  float scaledWhite = abs(brightness*500);
+  float scaledWhite = abs(brightness*250);
+//  Serial.println(brightness);
+
+  analogWrite(pixel, scaledWhite);
   
-  strip.setPixelColor(pixel, strip.Color(scaledWhite, scaledWhite, scaledWhite));
-  strip.show();
   delay(random(5, 100));
   currentDataPoint++;
   currentDataPoint = currentDataPoint%NUM_Y_VALUES;
 }
 
-/**
- * Read the data from the BLE, breaking on '\n' and '\r' characters.
- */
-String readFromBluetooth() {
-  String readString = "";
-
-    while (Serial.available()) {
-    delay(10);  //small delay to allow input buffer to fill
-
-    char c = Serial.read(); //gets one byte from serial buffer
-    if (c == '\n' || c == '\r') {
-      break;
-    }
-    readString += c;
-  }
-  return readString;
-}
 
 float callFunction(int index) {
   return (*functionPtrs[index])(); //calls the function at the index of `index` in the array
