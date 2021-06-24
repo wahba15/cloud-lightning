@@ -13,17 +13,17 @@ void setup() {
 void loop() {
   //Fading the LED
   for(int i=0; i<255; i++){
-    analogWrite(led_pin1, 0);
-    analogWrite(led_pin2, 0);
-    analogWrite(led_pin3, 0);
-    analogWrite(led_pin4, 0);
-    delay(5);
+    analogWrite(led_pin1, i);
+    analogWrite(led_pin2, i);
+    analogWrite(led_pin3, i);
+    analogWrite(led_pin4, i);
+    delay(1000);
   }
   for(int i=255; i>0; i--){
     analogWrite(led_pin1, i);
     analogWrite(led_pin2, i);
     analogWrite(led_pin3, i);
     analogWrite(led_pin4, i);
-    delay(5);
+    delay(1000);
   }
 }

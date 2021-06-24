@@ -37,6 +37,7 @@ float yValues[] = {
   1
 };
 
+int loop_reset=0;
 float simple_moving_average_previous = 0;
 float random_moving_average_previous = 0;
 
@@ -55,7 +56,7 @@ void setup() {
 }
 
 void loop() {
-
+  loop_reset++;
   if (random(chance) == 3) {
     int led = ledPins[random(NUM_LEDS)];
     for (int i = 0; i < 10; i++) {
@@ -70,6 +71,12 @@ void loop() {
     chance = LOW_STRIKE_LIKELIHOOD;
   }
   turnAllPixelsOff();
+  if (loop_reset>NUM_Y_VALUES)  {
+    loop_reset=0;
+    currentDataPoint = 0;
+    simple_moving_average_previous = 0;
+    random_moving_average_previous = 0;
+  }
   delay(1000);
 }
 
