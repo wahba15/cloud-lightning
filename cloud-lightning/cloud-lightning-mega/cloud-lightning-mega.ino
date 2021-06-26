@@ -7,7 +7,7 @@
 //   NEO_KHZ400  400 KHz bitstream (e.g. FLORA pixels)
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
 int NUM_LEDS = 4;
-int ledPins[]={3,5,6,9};
+int ledPins[]={6,7,4,5};
 
 const int HIGH_STRIKE_LIKELIHOOD = 5;
 const int LOW_STRIKE_LIKELIHOOD = 10;
@@ -37,6 +37,7 @@ float yValues[] = {
   1
 };
 
+int loop_reset=0;
 float simple_moving_average_previous = 0;
 float random_moving_average_previous = 0;
 
@@ -44,7 +45,7 @@ float (*functionPtrs[10])(); //the array of function pointers
 int NUM_FUNCTIONS = 2;
 
 void setup() {
-//Serial.begin(9600);
+Serial.begin(9600);
   for (int i = 0; i < NUM_LEDS; i++) {
   pinMode(ledPins[i], OUTPUT);
   }
@@ -55,22 +56,34 @@ void setup() {
 }
 
 void loop() {
-
-  if (random(chance) == 3) {
+  loop_reset++;
+  if (true) {
+//    if (random(chance) == 3) {
+    
     int led = ledPins[random(NUM_LEDS)];
     for (int i = 0; i < 10; i++) {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
       lightningStrike(ledPins[random(NUM_LEDS)]);
+      Serial.println("Lightning");
     }
     // Once there's been one strike, I make it more likely that there will be a second.
+    Serial.println("Lightning Done");
     chance = HIGH_STRIKE_LIKELIHOOD;
   } else {
     chance = LOW_STRIKE_LIKELIHOOD;
   }
   turnAllPixelsOff();
+  if (loop_reset>NUM_Y_VALUES)  {
+    loop_reset=0;
+    currentDataPoint = 0;
+    simple_moving_average_previous = 0;
+    random_moving_average_previous = 0;
+    Serial.println("Reset");
+  }
   delay(1000);
+  Serial.println("Delay Done");
 }
 
 void turnAllPixelsOff() {

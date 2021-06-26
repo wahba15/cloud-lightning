@@ -45,7 +45,7 @@ float (*functionPtrs[10])(); //the array of function pointers
 int NUM_FUNCTIONS = 2;
 
 void setup() {
-//Serial.begin(9600);
+Serial.begin(9600);
   for (int i = 0; i < NUM_LEDS; i++) {
   pinMode(ledPins[i], OUTPUT);
   }
@@ -57,15 +57,19 @@ void setup() {
 
 void loop() {
   loop_reset++;
-  if (random(chance) == 3) {
+  if (true) {
+//    if (random(chance) == 3) {
+    
     int led = ledPins[random(NUM_LEDS)];
     for (int i = 0; i < 10; i++) {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
       lightningStrike(ledPins[random(NUM_LEDS)]);
+      Serial.println("Lightning");
     }
     // Once there's been one strike, I make it more likely that there will be a second.
+    Serial.println("Lightning Done");
     chance = HIGH_STRIKE_LIKELIHOOD;
   } else {
     chance = LOW_STRIKE_LIKELIHOOD;
@@ -76,8 +80,10 @@ void loop() {
     currentDataPoint = 0;
     simple_moving_average_previous = 0;
     random_moving_average_previous = 0;
+    Serial.println("Reset");
   }
   delay(1000);
+  Serial.println("Delay Done");
 }
 
 void turnAllPixelsOff() {
