@@ -5,25 +5,33 @@ int led_pin3 = 3;
 int led_pin4 = 9;
 void setup() {
   //Declaring LED pin as output
-  pinMode(led_pin1, OUTPUT);
-  pinMode(led_pin2, OUTPUT);
-  pinMode(led_pin3, OUTPUT);
-  pinMode(led_pin4, OUTPUT);
+  for (int i = 2; i < 14; i++) {
+    pinMode(i, OUTPUT);
+  }
+
 }
+//void loop() {
+//  //Fading the LED
+//  for (int i = 0; i < 255; i++) {
+//    for (int j = 2; j < 14; j++) {
+//      analogWrite(j, i);
+//    }
+//
+//    delay(5);
+//  }
+//  for (int i = 255; i > 0; i--) {
+//    for (int j = 2; j < 14; j++) {
+//      analogWrite(j, i);
+//    }
+//    delay(5);
+//  }
+//}
+
 void loop() {
   //Fading the LED
-  for(int i=0; i<255; i++){
-    analogWrite(led_pin1, i);
-    analogWrite(led_pin2, i);
-    analogWrite(led_pin3, i);
-    analogWrite(led_pin4, i);
-    delay(1000);
-  }
-  for(int i=255; i>0; i--){
-    analogWrite(led_pin1, i);
-    analogWrite(led_pin2, i);
-    analogWrite(led_pin3, i);
-    analogWrite(led_pin4, i);
-    delay(1000);
-  }
+    for (int j = 2; j < 14; j++) {
+      analogWrite(j, 255);
+      delay(1000);
+      analogWrite(j, 0);
+    }
 }

@@ -7,7 +7,8 @@
 //   NEO_KHZ400  400 KHz bitstream (e.g. FLORA pixels)
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
 int NUM_LEDS = 4;
-int ledPins[]={6,7,4,5};
+//int ledPins[]={2,3,4,5,6,7,8,9,10,11,12,13};
+int allledPins[]={2,6,3,5,11,13,12,10,9,7,8,4};
 
 const int HIGH_STRIKE_LIKELIHOOD = 5;
 const int LOW_STRIKE_LIKELIHOOD = 10;
@@ -46,8 +47,8 @@ int NUM_FUNCTIONS = 2;
 
 void setup() {
 Serial.begin(9600);
-  for (int i = 0; i < NUM_LEDS; i++) {
-  pinMode(ledPins[i], OUTPUT);
+  for (int i = 0; i < 12; i++) {
+  pinMode(allledPins[i], OUTPUT);
   }
 
   // initializes the array of function pointers.
@@ -56,12 +57,14 @@ Serial.begin(9600);
 }
 
 void loop() {
+  int ledStart=random(0,9);
+  int ledPins[]={allledPins[ledStart],allledPins[ledStart+1],allledPins[ledStart+2],allledPins[ledStart+3]};
   loop_reset++;
   if (true) {
 //    if (random(chance) == 3) {
     
     int led = ledPins[random(NUM_LEDS)];
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
@@ -87,8 +90,8 @@ void loop() {
 }
 
 void turnAllPixelsOff() {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    analogWrite(ledPins[i], 0);
+  for (int i = 0; i < 12; i++) {
+    analogWrite(allledPins[i], 0);
   }
 }
 
