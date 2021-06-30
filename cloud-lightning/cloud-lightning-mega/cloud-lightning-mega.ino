@@ -6,8 +6,9 @@
 //   NEO_GRB     Pixels are wired for GRB bitstream
 //   NEO_KHZ400  400 KHz bitstream (e.g. FLORA pixels)
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
-int NUM_LEDS = 4;
+int NUM_LEDS = 12;
 //int ledPins[]={2,3,4,5,6,7,8,9,10,11,12,13};
+int ledPins[]={2,6,3,5,11,13,12,10,9,7,8,4};
 int allledPins[]={2,6,3,5,11,13,12,10,9,7,8,4};
 
 const int HIGH_STRIKE_LIKELIHOOD = 5;
@@ -57,8 +58,8 @@ Serial.begin(9600);
 }
 
 void loop() {
-  int ledStart=random(0,9);
-  int ledPins[]={allledPins[ledStart],allledPins[ledStart+1],allledPins[ledStart+2],allledPins[ledStart+3]};
+  int start=random(9);
+  int lightningLength=random(3,NUM_LEDS-start+1);
   loop_reset++;
   if (true) {
 //    if (random(chance) == 3) {
@@ -68,7 +69,7 @@ void loop() {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
-      lightningStrike(ledPins[random(NUM_LEDS)]);
+      lightningStrike(ledPins[random(start,start+lightningLength)]);
       Serial.println("Lightning");
     }
     // Once there's been one strike, I make it more likely that there will be a second.
@@ -90,8 +91,8 @@ void loop() {
 }
 
 void turnAllPixelsOff() {
-  for (int i = 0; i < 12; i++) {
-    analogWrite(allledPins[i], 0);
+  for (int i = 0; i < NUM_LEDS; i++) {
+    analogWrite(ledPins[i], 0);
   }
 }
 
