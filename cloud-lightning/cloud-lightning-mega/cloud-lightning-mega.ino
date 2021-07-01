@@ -8,8 +8,8 @@
 //   NEO_KHZ800  800 KHz bitstream (e.g. High Density LED strip)
 int NUM_LEDS = 12;
 //int ledPins[]={2,3,4,5,6,7,8,9,10,11,12,13};
-int ledPins[]={2,6,3,5,11,13,12,10,9,7,8,4};
-int allledPins[]={2,6,3,5,11,13,12,10,9,7,8,4};
+int ledPins[] = {2, 6, 3, 5, 11, 13, 12, 10, 9, 7, 8, 4};
+int allledPins[] = {2, 6, 3, 5, 11, 13, 12, 10, 9, 7, 8, 4};
 
 const int HIGH_STRIKE_LIKELIHOOD = 5;
 const int LOW_STRIKE_LIKELIHOOD = 10;
@@ -39,7 +39,7 @@ float yValues[] = {
   1
 };
 
-int loop_reset=0;
+int loop_reset = 0;
 float simple_moving_average_previous = 0;
 float random_moving_average_previous = 0;
 
@@ -47,9 +47,9 @@ float (*functionPtrs[10])(); //the array of function pointers
 int NUM_FUNCTIONS = 2;
 
 void setup() {
-Serial.begin(9600);
+  Serial.begin(9600);
   for (int i = 0; i < 12; i++) {
-  pinMode(allledPins[i], OUTPUT);
+    pinMode(allledPins[i], OUTPUT);
   }
 
   // initializes the array of function pointers.
@@ -58,18 +58,18 @@ Serial.begin(9600);
 }
 
 void loop() {
-  int start=random(9);
-  int lightningLength=random(3,NUM_LEDS-start+1);
+  int start = random(9);
+  int lightningLength = random(3, NUM_LEDS - start + 1);
   loop_reset++;
-  if (true) {
-//    if (random(chance) == 3) {
-    
+//    if (true) {
+  if (random(chance) == 3) {
+
     int led = ledPins[random(NUM_LEDS)];
     for (int i = 0; i < 30; i++) {
       // Use this line to keep the lightning focused in one LED.
       // lightningStrike(led):
       // Use this line if you want the lightning to spread out among multiple LEDs.
-      lightningStrike(ledPins[random(start,start+lightningLength)]);
+      lightningStrike(ledPins[random(start, start + lightningLength)]);
       Serial.println("Lightning");
     }
     // Once there's been one strike, I make it more likely that there will be a second.
@@ -79,8 +79,8 @@ void loop() {
     chance = LOW_STRIKE_LIKELIHOOD;
   }
   turnAllPixelsOff();
-  if (loop_reset>NUM_Y_VALUES)  {
-    loop_reset=0;
+  if (loop_reset > NUM_Y_VALUES)  {
+    loop_reset = 0;
     currentDataPoint = 0;
     simple_moving_average_previous = 0;
     random_moving_average_previous = 0;
@@ -98,14 +98,14 @@ void turnAllPixelsOff() {
 
 void lightningStrike(int pixel) {
   float brightness = callFunction(random(NUM_FUNCTIONS));
-  float scaledWhite = abs(brightness*250);
-//  Serial.println(brightness);
+  float scaledWhite = abs(brightness * 250);
+  //  Serial.println(brightness);
 
   analogWrite(pixel, scaledWhite);
-  
+
   delay(random(5, 100));
   currentDataPoint++;
-  currentDataPoint = currentDataPoint%NUM_Y_VALUES;
+  currentDataPoint = currentDataPoint % NUM_Y_VALUES;
 }
 
 
@@ -116,10 +116,10 @@ float callFunction(int index) {
 // https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average
 float simple_moving_average() {
   uint32_t startingValue = currentDataPoint;
-  uint32_t endingValue = (currentDataPoint+1)%NUM_Y_VALUES;
-  float simple_moving_average_current = simple_moving_average_previous + 
-                                  (yValues[startingValue])/NUM_Y_VALUES - 
-                                  (yValues[endingValue])/NUM_Y_VALUES;
+  uint32_t endingValue = (currentDataPoint + 1) % NUM_Y_VALUES;
+  float simple_moving_average_current = simple_moving_average_previous +
+                                        (yValues[startingValue]) / NUM_Y_VALUES -
+                                        (yValues[endingValue]) / NUM_Y_VALUES;
 
   simple_moving_average_previous = simple_moving_average_current;
   return simple_moving_average_current;
@@ -131,8 +131,8 @@ float random_moving_average() {
   float firstValue = random(1, 10);
   float secondValue = random(1, 10);
   float random_moving_average_current = random_moving_average_previous +
-                                  firstValue/NUM_Y_VALUES -
-                                  secondValue/NUM_Y_VALUES;
+                                        firstValue / NUM_Y_VALUES -
+                                        secondValue / NUM_Y_VALUES;
   random_moving_average_previous = random_moving_average_current;
 
   return random_moving_average_current;
